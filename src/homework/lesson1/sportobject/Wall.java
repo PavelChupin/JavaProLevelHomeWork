@@ -15,12 +15,9 @@ public class Wall  implements Sports {
     }
 
 
-    @Override
-    public boolean run(ActionsObject actionsObject) {
-        return true;
-    }
 
-    public boolean jump(ActionsObject actionsObject){
+    @Override
+    public boolean doAction(ActionsObject actionsObject){
         return actionsObject.jump(height);
     }
 

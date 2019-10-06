@@ -31,8 +31,7 @@ public class MainHomeWorkLesson1 {
         for (ActionsObject o : actionsObjects){
             //Проходим беговую дорожку
             for (Sports r : sports){
-                if(!r.run(o)){break;}
-                if(!r.jump(o)){break;}
+                if(!r.doAction(o)){break;}
             }
         }
 

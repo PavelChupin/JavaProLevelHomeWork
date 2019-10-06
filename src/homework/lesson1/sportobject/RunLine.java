@@ -13,13 +13,10 @@ public class RunLine implements Sports {
     }
 
     @Override
-    public boolean run(ActionsObject actionsObject){
+    public boolean doAction(ActionsObject actionsObject){
         return actionsObject.run(distance);
     }
 
-    @Override
-    public boolean jump(ActionsObject actionsObject) {
-        return true;
-    }
+
 
 }
