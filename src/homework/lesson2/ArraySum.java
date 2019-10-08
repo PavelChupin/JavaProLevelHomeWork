@@ -5,8 +5,8 @@ public class ArraySum {
     public static final int sizeX = 4;
 
 
-    public long arraySum(String[][] strings) throws MyArraySizeException, MyArrayDataException {
-        long sum = 0;
+    public int arraySum(String[][] strings) throws MyArraySizeException, MyArrayDataException {
+        int sum = 0;
 
         //Проверяем массив на размерность
         if((strings == null) || (strings.length != this.sizeY) || (strings[0].length != this.sizeX)){
@@ -17,7 +17,7 @@ public class ArraySum {
         for (int y = 0;y < strings.length;y++){
             for (int x = 0;x< strings[y].length;x++) {
                 try{
-                sum+=Long.parseLong(strings[y][x]);
+                sum+=Integer.parseInt(strings[y][x]);
                 }catch (Exception e){
                     throw new MyArrayDataException("Ячейка массива: Y = " + y + ", X = " + x + ". Содержит значение с не числовыми символами: " + strings[y][x] + ".");
                 }
