@@ -1,6 +1,6 @@
 package homework.lesson2;
 
-public class MyArrayDataException extends ArithmeticException{
+public class MyArrayDataException extends NumberFormatException{
 
     public MyArrayDataException(){}
 
