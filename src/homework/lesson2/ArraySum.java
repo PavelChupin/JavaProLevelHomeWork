@@ -18,8 +18,8 @@ public class ArraySum {
             for (int x = 0;x< strings[y].length;x++) {
                 try{
                 sum+=Integer.parseInt(strings[y][x]);
-                }catch (Exception e){
-                    throw new MyArrayDataException("Ячейка массива: Y = " + y + ", X = " + x + ". Содержит значение с не числовыми символами: " + strings[y][x] + ".");
+                }catch (NumberFormatException e){
+                    throw new MyArrayDataException("Ячейка массива: Y = " + y + ", X = " + x + ". Содержит значение с не числовыми символами или имеется переполнение типа данных: " + strings[y][x] + ".");
                 }
 
             }
