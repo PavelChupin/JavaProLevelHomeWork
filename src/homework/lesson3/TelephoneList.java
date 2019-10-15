@@ -1,12 +1,9 @@
 package homework.lesson3;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class TelephoneList {
-    Map<String, ArrayList<String>> telephoneList;
+public class TelephoneList implements IPhoneBook{
+    Map<String, List<String>> telephoneList;
 
     public TelephoneList() {
         this.telephoneList = new HashMap<>();
@@ -24,7 +21,7 @@ public class TelephoneList {
     }
 
     private void putNewPerson(String phone, String lastName) {
-        ArrayList<String> phones = new ArrayList<>();
+        List<String> phones = new ArrayList<>();
         phones.add(phone);
         this.telephoneList.put(lastName, phones);
     }
@@ -35,10 +32,12 @@ public class TelephoneList {
         }
     }
 
+    @Override
     public List<String> get(String lastName) {
         return this.telephoneList.get(lastName);
     }
 
+    @Override
     public void add(String phone, String lastName) throws RuntimeException {
         //Проверим валидность данных
         checkData(phone, lastName);

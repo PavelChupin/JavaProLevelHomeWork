@@ -24,5 +24,13 @@ public class MainHomeWorkLesson3_Task1 {
         words.countWords().forEach((r,t)->{
             System.out.println("Слово " + r + " встречается в массиве " + t + " раз");
         });
+        System.out.println();
+        words.countWords(1).forEach((r,t)->{
+            System.out.println("Слово " + r + " встречается в массиве " + t + " раз");
+        });
+        System.out.println();
+        words.countWords(1,1).forEach((r,t)->{
+            System.out.println("Слово " + r + " встречается в массиве " + t + " раз");
+        });
     }
 }

@@ -16,6 +16,7 @@ public class Words {
         return strings;
     }
 
+
     public Map<String, Integer> countWords() {
         Map<String, Integer> counts = new HashMap<>();
         for (String s : uniq()) {
@@ -26,6 +27,36 @@ public class Words {
                 }
             }
             counts.put(s, count);
+            //Другие варианты 1- вый параметр это значение из Map по ключу, второй параметр на сколько увеличить первый, третий какую функцию можно использовать.
+            //counts.merge(s,1,(oldValue, newValue)-> oldValue + newValue);
+            //counts.merge(s,1,Integer::sum);
+
+        }
+        return counts;
+    }
+
+    public Map<String, Integer> countWords(int a) {
+        Map<String, Integer> counts = new HashMap<>();
+        for (String s : uniq()) {
+            for (String w : words) {
+                if (w.equals(s)) {
+                    //1- вый параметр это значение из Map по ключу, второй параметр на сколько увеличить первый, третий какую функцию можно использовать.
+                    counts.merge(s, 1, Integer::sum);
+                }
+            }
+        }
+        return counts;
+    }
+
+    public Map<String, Integer> countWords(int a, int b) {
+        Map<String, Integer> counts = new HashMap<>();
+        for (String s : uniq()) {
+            for (String w : words) {
+                if (w.equals(s)) {
+                    //1- вый параметр это значение из Map по ключу, второй параметр на сколько увеличить первый, третий какую функцию можно использовать.
+                    counts.merge(s, 1, (oldValue, newValue) -> oldValue + newValue);
+                }
+            }
         }
         return counts;
     }

@@ -5,9 +5,9 @@ public class MainHomeWorkLesson3_Task2 {
         //Добавляем данные
         try {
             //TelephoneList telephoneList = new TelephoneList();
-            TelephoneList telephoneList = new TelephoneList("+79137382899", "Chupin");
+            IPhoneBook telephoneList = new TelephoneList("+79137382899", "Chupin");
             telephoneList.add("+79994648595", "Chupin");
-            System.out.println("Phones Chupin: " + telephoneList.get("Chupin"));
+            System.out.println(String.format("Phones Chupin: %s", telephoneList.get("Chupin")));
         }catch (RuntimeException e){
             System.out.println(e.getMessage());
         }
