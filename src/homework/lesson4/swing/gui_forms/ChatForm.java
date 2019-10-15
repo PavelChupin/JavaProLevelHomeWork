@@ -10,11 +10,10 @@ public class ChatForm {
     private JButton send_button;
     private JTextField inputText;
     private JList outputChat;
+    private DefaultListModel listModel;
 
     public ChatForm() {
-        //mainPanel.setSize(500,500);
-
-        DefaultListModel listModel = new DefaultListModel();
+        listModel = new DefaultListModel();
         outputChat.setModel(listModel);
 
         ChatActionListener chatActionListener = new ChatActionListener(inputText, listModel);
@@ -26,4 +25,11 @@ public class ChatForm {
         return mainPanel;
     }
 
+    public JTextField getInputText() {
+        return inputText;
+    }
+
+    public DefaultListModel getListModel() {
+        return listModel;
+    }
 }
