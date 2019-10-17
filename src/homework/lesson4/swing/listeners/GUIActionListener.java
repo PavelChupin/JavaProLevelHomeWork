@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 
 public abstract class GUIActionListener implements ActionListener {
     protected JTextField inputText;
-    protected DefaultListModel listModel;
+    protected DefaultListModel<String> listModel;
 
     protected GUIActionListener(JTextField inputText, DefaultListModel listModel) {
         this.inputText = inputText;

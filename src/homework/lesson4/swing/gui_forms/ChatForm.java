@@ -3,16 +3,20 @@ package homework.lesson4.swing.gui_forms;
 import homework.lesson4.swing.listeners.ChatActionListener;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class ChatForm {
     private JPanel mainPanel;
     private JPanel navigationPanel;
     private JButton send_button;
     private JTextField inputText;
-    private JList outputChat;
-    private DefaultListModel listModel;
+    private JList<String> outputChat;
+    private DefaultListModel<String> listModel;
 
     public ChatForm() {
+        //Задаем размер полю чата
+        outputChat.setPreferredSize(new Dimension(600, 200));
+
         listModel = new DefaultListModel();
         outputChat.setModel(listModel);
 

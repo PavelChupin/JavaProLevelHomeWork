@@ -4,6 +4,7 @@ import homework.lesson4.swing.gui_forms.ChatForm;
 import homework.lesson4.swing.listeners.MenuActionListener;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -39,8 +40,12 @@ public class MainHomeWorkLesson4 {
         //добавляем панель меню в основное окно
         frame.setJMenuBar(menuBar);
 
-
+        //Установим размер главного окна по умолчанию
+        //frame.setSize(new Dimension(600, 300));
+        //Установим размер главного окна в зависимости от отображаемых элементов.
         frame.pack();
+
+
         frame.setVisible(true);
     }
 
