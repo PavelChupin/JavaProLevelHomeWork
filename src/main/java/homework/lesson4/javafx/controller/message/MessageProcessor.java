@@ -1,5 +1,6 @@
 package homework.lesson4.javafx.controller.message;
-/*
+
+
 import javafx.scene.control.TextArea;
 
 public class MessageProcessor implements IMessageProcessor {
@@ -19,4 +20,4 @@ public class MessageProcessor implements IMessageProcessor {
     public void processRetrievedMessage(String message) {
         chatTextArea.appendText(message + System.lineSeparator());
     }
-}*/
+}
