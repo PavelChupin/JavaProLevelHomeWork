@@ -1,7 +1,5 @@
 package homework.lesson1.object;
 
-import homework.lesson1.ActionsObject;
-
 public class Robot implements ActionsObject {
     private long maxrun;
     private long maxjump;

@@ -6,19 +6,19 @@ public class Words {
     List<String> words;
 
     Words(String[] words) {
-        this.words = new ArrayList<>();
+        this.words = new ArrayList<String>();
         this.words.addAll(Arrays.asList(words));
     }
 
     public Set<String> uniq() {
-        Set<String> strings = new HashSet<>();
+        Set<String> strings = new HashSet<String>();
         strings.addAll(this.words);
         return strings;
     }
 
 
     public Map<String, Integer> countWords() {
-        Map<String, Integer> counts = new HashMap<>();
+        Map<String, Integer> counts = new HashMap<String, Integer>();
         for (String s : uniq()) {
             int count = 0;
             for (String w : words) {
@@ -36,7 +36,7 @@ public class Words {
     }
 
     public Map<String, Integer> countWords(int a) {
-        Map<String, Integer> counts = new HashMap<>();
+        Map<String, Integer> counts = new HashMap<String, Integer>();
         for (String s : uniq()) {
             for (String w : words) {
                 if (w.equals(s)) {

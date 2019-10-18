@@ -13,6 +13,7 @@ public abstract class GUIActionListener implements ActionListener {
         this.listModel = listModel;
     }
 
+
     @Override
     public abstract void actionPerformed(ActionEvent e);
 

@@ -1,7 +1,6 @@
 package homework.lesson1.sportobject;
 
-import homework.lesson1.ActionsObject;
-import homework.lesson1.Sports;
+import homework.lesson1.object.ActionsObject;
 
 public class Wall  implements Sports {
 
@@ -13,8 +12,6 @@ public class Wall  implements Sports {
     public Wall(long height) {
         this.height = height;
     }
-
-
 
     @Override
     public boolean doAction(ActionsObject actionsObject){

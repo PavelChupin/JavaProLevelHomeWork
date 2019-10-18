@@ -1,7 +1,6 @@
 package homework.lesson1.sportobject;
 
-import homework.lesson1.ActionsObject;
-import homework.lesson1.Sports;
+import homework.lesson1.object.ActionsObject;
 
 public class RunLine implements Sports {
     private long distance;

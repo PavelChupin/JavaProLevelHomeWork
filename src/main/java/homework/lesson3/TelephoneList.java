@@ -6,7 +6,7 @@ public class TelephoneList implements IPhoneBook{
     Map<String, List<String>> telephoneList;
 
     public TelephoneList() {
-        this.telephoneList = new HashMap<>();
+        this.telephoneList = new HashMap<String, List<String>>();
     }
 
     public TelephoneList(String phone, String lastName) throws RuntimeException {
@@ -21,7 +21,7 @@ public class TelephoneList implements IPhoneBook{
     }
 
     private void putNewPerson(String phone, String lastName) {
-        List<String> phones = new ArrayList<>();
+        List<String> phones = new ArrayList<String>();
         phones.add(phone);
         this.telephoneList.put(lastName, phones);
     }
