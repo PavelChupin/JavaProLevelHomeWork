@@ -3,10 +3,10 @@ package homework.lesson4.javafx.controller.message;
 
 import javafx.scene.control.TextArea;
 
-public class MessageProcessor implements IMessageProcessor {
+public class MockMessageService implements IMessageService {
     private TextArea chatTextArea;
 
-    public MessageProcessor(TextArea chatTextArea) {
+    public MockMessageService(TextArea chatTextArea) {
         this.chatTextArea = chatTextArea;
     }
 
@@ -18,6 +18,7 @@ public class MessageProcessor implements IMessageProcessor {
 
     @Override
     public void processRetrievedMessage(String message) {
+        //System.lineSeparator() соответсвует "\n"
         chatTextArea.appendText(message + System.lineSeparator());
     }
 }

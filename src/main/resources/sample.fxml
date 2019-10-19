@@ -5,11 +5,15 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="700.0" style="-fx-background-color: BLACK;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="homework.lesson4.javafx.controller.PrimaryController">
+<AnchorPane xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="homework.lesson4.javafx.controller.PrimaryController" maxHeight="-Infinity" maxWidth="-Infinity"
+            minHeight="-Infinity" minWidth="-Infinity" prefHeight="402.0" prefWidth="700.0" style="-fx-background-color: BLACK;"
+            >
    <children>
       <AnchorPane layoutY="362.0" prefHeight="38.0" prefWidth="700.0">
          <children>
-            <Button fx:id="sendMessageButton" onAction="#sendMessage" layoutX="570.0" layoutY="7.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="122.0" text="Отправить" />
+            <Button fx:id="sendMessageButton" onAction="#sendMessage" layoutX="570.0" layoutY="7.0" mnemonicParsing="false"
+                    prefHeight="25.0" prefWidth="122.0" text="Send" />
             <TextField fx:id="messageText" onAction="#sendText" layoutX="9.0" layoutY="8.0" prefHeight="19.0" prefWidth="554.0" />
          </children>
       </AnchorPane>

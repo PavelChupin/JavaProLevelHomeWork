@@ -1,7 +1,7 @@
 package homework.lesson4.javafx.controller;
 
-import homework.lesson4.javafx.controller.message.IMessageProcessor;
-import homework.lesson4.javafx.controller.message.MessageProcessor;
+import homework.lesson4.javafx.controller.message.IMessageService;
+import homework.lesson4.javafx.controller.message.MockMessageService;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -22,7 +22,7 @@ public class PrimaryController implements Initializable {
     public @FXML
     Button sendMessageButton;
 
-    private IMessageProcessor messageProcessor;
+    private IMessageService messageProcessor;
 
     @FXML
     public void sendText(ActionEvent actionEvent) {
@@ -45,6 +45,6 @@ public class PrimaryController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        this.messageProcessor = new MessageProcessor(chatTextArea);
+        this.messageProcessor = new MockMessageService(chatTextArea);
     }
 }
