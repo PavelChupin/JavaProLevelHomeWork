@@ -25,20 +25,22 @@ public class PrimaryController implements Initializable {
     private IMessageProcessor messageProcessor;
 
     @FXML
-    public void sendText(ActionEvent actionEvent){
+    public void sendText(ActionEvent actionEvent) {
         sendMessage();
     }
 
 
     @FXML
-    public void sendMessage(ActionEvent actionEvent){
+    public void sendMessage(ActionEvent actionEvent) {
         sendMessage();
     }
 
-    private void sendMessage(){
+    private void sendMessage() {
         String message = messageText.getText();
-        messageProcessor.sendMessage(message);
-        messageText.clear();
+        if (message != null && !message.isEmpty()) {
+            messageProcessor.sendMessage(message);
+            messageText.clear();
+        }
     }
 
     @Override
