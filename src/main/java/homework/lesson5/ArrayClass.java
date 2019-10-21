@@ -25,7 +25,7 @@ public class ArrayClass {
 
     private void arrayA1(int index, int sync) {
         if(sync == 1){
-            a1 = arrayASync(a1,index);
+            synchronized (this) {a1 = arrayA(a1,index);}
         }
         else{
         a1 = arrayA(a1,index);}
@@ -33,7 +33,7 @@ public class ArrayClass {
 
     private void arrayA2(int index, int sync) {
         if(sync == 1){
-            a2 = arrayASync(a2,index);
+            synchronized (this) {a2 = arrayA(a2,index);}
         }
         else{
             a2 = arrayA(a2,index);}
@@ -47,14 +47,6 @@ public class ArrayClass {
         return d;
     }
 
-
-    private synchronized float[] arrayASync(float[] f,int index) {
-        float[] d = new float[f.length];
-        for (int i = 0; i < f.length; i++, index++) {
-            d[i] = (float) (f[i] * Math.sin(0.2f + index / 5) * Math.cos(0.2f + index / 5) * Math.cos(0.4f + index / 2));
-        }
-        return d;
-    }
 
     private float[] arrayHalf(int indexFrom, int lenght) {
         float[] f = new float[HALF];
