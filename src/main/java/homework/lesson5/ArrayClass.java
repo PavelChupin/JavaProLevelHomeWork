@@ -35,9 +35,9 @@ public class ArrayClass {
         }
     }
 
-    private float[] arrayHalf(int indexFrom, int indexTo) {
+    private float[] arrayHalf(int indexFrom, int lenght) {
         float[] f = new float[HALF];
-        System.arraycopy(arr, indexFrom, f, 0, indexTo);
+        System.arraycopy(arr, indexFrom, f, 0, lenght);
         return f;
     }
 
