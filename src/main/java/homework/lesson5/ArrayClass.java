@@ -23,16 +23,37 @@ public class ArrayClass {
         }
     }
 
-    private void arrayA1(int index) {
-        for (int i = 0; i < a1.length; i++, index++) {
-            a1[i] = (float) (a1[i] * Math.sin(0.2f + index / 5) * Math.cos(0.2f + index / 5) * Math.cos(0.4f + index / 2));
+    private void arrayA1(int index, int sync) {
+        if(sync == 1){
+            a1 = arrayASync(a1,index);
         }
+        else{
+        a1 = arrayA(a1,index);}
     }
 
-    private void arrayA2(int index) {
-        for (int i = 0; i < a2.length; i++, index++) {
-            a2[i] = (float) (a2[i] * Math.sin(0.2f + index / 5) * Math.cos(0.2f + index / 5) * Math.cos(0.4f + index / 2));
+    private void arrayA2(int index, int sync) {
+        if(sync == 1){
+            a2 = arrayASync(a2,index);
         }
+        else{
+            a2 = arrayA(a2,index);}
+    }
+
+    private float[] arrayA(float[] f,int index) {
+        float[] d = new float[f.length];
+        for (int i = 0; i < f.length; i++, index++) {
+            d[i] = (float) (f[i] * Math.sin(0.2f + index / 5) * Math.cos(0.2f + index / 5) * Math.cos(0.4f + index / 2));
+        }
+        return d;
+    }
+
+
+    private synchronized float[] arrayASync(float[] f,int index) {
+        float[] d = new float[f.length];
+        for (int i = 0; i < f.length; i++, index++) {
+            d[i] = (float) (f[i] * Math.sin(0.2f + index / 5) * Math.cos(0.2f + index / 5) * Math.cos(0.4f + index / 2));
+        }
+        return d;
     }
 
     private float[] arrayHalf(int indexFrom, int lenght) {
@@ -62,8 +83,30 @@ public class ArrayClass {
         this.a1 = arrayHalf(0, HALF);
         this.a2 = arrayHalf(HALF, HALF);
 
-        Thread t1 = new Thread(() -> arrayA1(0));
-        Thread t2 = new Thread(() -> arrayA2(HALF));
+        Thread t1 = new Thread(() -> arrayA1(0,0));
+        Thread t2 = new Thread(() -> arrayA2(HALF,0));
+        t1.start();
+        t2.start();
+
+        //Делаем задержку, ждем пока все потоки закончат работать
+        do {
+            Thread.sleep(1);
+        } while (t1.isAlive() || t2.isAlive());
+
+        //Склеиваем массив
+        arrayJoin();
+
+        return System.currentTimeMillis() - a;
+    }
+
+    public float method3() throws InterruptedException {
+        long a = System.currentTimeMillis();
+
+        this.a1 = arrayHalf(0, HALF);
+        this.a2 = arrayHalf(HALF, HALF);
+
+        Thread t1 = new Thread(() -> arrayA1(0,1));
+        Thread t2 = new Thread(() -> arrayA2(HALF,1));
         t1.start();
         t2.start();
 
