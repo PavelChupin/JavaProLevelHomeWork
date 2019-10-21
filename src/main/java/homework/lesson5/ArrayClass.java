@@ -23,16 +23,16 @@ public class ArrayClass {
         }
     }
 
-    private void arrayA1(int index, int sync) {
-        if(sync == 1){
+    private void arrayA1(int index, boolean sync) {
+        if(sync){
             synchronized (this) {a1 = arrayA(a1,index);}
         }
         else{
         a1 = arrayA(a1,index);}
     }
 
-    private void arrayA2(int index, int sync) {
-        if(sync == 1){
+    private void arrayA2(int index, boolean sync) {
+        if(sync){
             synchronized (this) {a2 = arrayA(a2,index);}
         }
         else{
@@ -75,8 +75,8 @@ public class ArrayClass {
         this.a1 = arrayHalf(0, HALF);
         this.a2 = arrayHalf(HALF, HALF);
 
-        Thread t1 = new Thread(() -> arrayA1(0,0));
-        Thread t2 = new Thread(() -> arrayA2(HALF,0));
+        Thread t1 = new Thread(() -> arrayA1(0,false));
+        Thread t2 = new Thread(() -> arrayA2(HALF,false));
         t1.start();
         t2.start();
 
@@ -97,8 +97,8 @@ public class ArrayClass {
         this.a1 = arrayHalf(0, HALF);
         this.a2 = arrayHalf(HALF, HALF);
 
-        Thread t1 = new Thread(() -> arrayA1(0,1));
-        Thread t2 = new Thread(() -> arrayA2(HALF,1));
+        Thread t1 = new Thread(() -> arrayA1(0,true));
+        Thread t2 = new Thread(() -> arrayA2(HALF,true));
         t1.start();
         t2.start();
 
