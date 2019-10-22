@@ -63,7 +63,8 @@ public class ArrayClass {
 
     public float method1() {
         //Создаем массив
-        float[] array = this.arr;
+        float[] array = new float[arr.length];
+        System.arraycopy(arr,0,array,0,arr.length);
         long a = System.currentTimeMillis();
         array(array);
         return System.currentTimeMillis() - a;
