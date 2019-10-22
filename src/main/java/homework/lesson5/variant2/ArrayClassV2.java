@@ -1,20 +1,16 @@
 package homework.lesson5.variant2;
 
-public class ArrayClass implements Runnable{
-    private float[] arr;
+public class ArrayClassV2 implements Runnable {
     private float[] a;
     private int index;
 
-    public ArrayClass(float[] arr, int index){
-        this.arr = arr;
+    public ArrayClassV2(float[] a, int index) {
         this.index = index;
-        this.a = new float[arr.length/2];
+        this.a = a;
     }
 
     @Override
     public void run() {
-        System.arraycopy(arr,index,a,0,a.length);
-
         for (int i = 0; i < a.length; i++, index++) {
             a[i] = (float) (a[i] * Math.sin(0.2f + index / 5) * Math.cos(0.2f + index / 5) * Math.cos(0.4f + index / 2));
         }
