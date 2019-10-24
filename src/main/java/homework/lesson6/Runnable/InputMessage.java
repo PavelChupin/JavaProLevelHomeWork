@@ -23,6 +23,7 @@ public class InputMessage implements Runnable {
                 break;
             } catch (IOException e) {
                 e.printStackTrace();
+                break;
             }
         }
     }

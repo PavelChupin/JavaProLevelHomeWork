@@ -25,6 +25,7 @@ public class OutputMessage implements Runnable {
                 break;
             } catch (IOException e) {
                 e.printStackTrace();
+                break;
             }
         }
     }
