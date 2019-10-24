@@ -7,10 +7,10 @@ public class MainServer {
 
     public static void main(String[] args) throws InterruptedException {
         //Вторая обобщенная реализация
-        SendMessage sendMessage = new SendMessage();
-
         try (ServerSocket serverSocket = new ServerSocket(8089)) {
             System.out.println("Сервер запущен");
+
+            SendMessage sendMessage = new SendMessage();
 
             //Ожидаем подключения от пользователя
             sendMessage.setSocket(serverSocket.accept());
