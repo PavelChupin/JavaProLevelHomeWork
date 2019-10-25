@@ -16,7 +16,7 @@ public class MainServer {
             sendMessage.setSocket(serverSocket.accept());
 
             System.out.println("Клиент подключился");
-            sendMessage.start();
+            sendMessage.start("Вы подключены к чату");
 
         } catch (IOException e) {
             e.printStackTrace();

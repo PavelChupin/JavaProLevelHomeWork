@@ -31,8 +31,21 @@ public class SendMessage {
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
 
-        threadIn = new Thread(new InputMessage(in));
-        threadOut = new Thread(new OutputMessage(out));
+        startThread();
+    }
+
+    public void start(String message) throws InterruptedException, IOException {
+        in = new DataInputStream(socket.getInputStream());
+        out = new DataOutputStream(socket.getOutputStream());
+
+        out.writeUTF(message);
+
+        startThread();
+    }
+
+    private void startThread() throws InterruptedException {
+        threadIn = new Thread(new InputMessage(this.in));
+        threadOut = new Thread(new OutputMessage(this.out));
         threadIn.start();
         threadOut.start();
 
