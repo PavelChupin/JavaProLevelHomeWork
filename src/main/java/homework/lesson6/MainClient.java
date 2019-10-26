@@ -5,7 +5,7 @@ import java.io.IOException;
 public class MainClient {
     public static void main(String[] args) throws IOException, InterruptedException {
         //Вторая обобщенная реализация
-        SendMessage sendMessage = new SendMessage("localhost", 8089);
+        SendMessage sendMessage = new SendMessage("localhost", 8089,false);
         sendMessage.start();
 
         //Первая реализация

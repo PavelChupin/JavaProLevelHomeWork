@@ -14,13 +14,16 @@ public class SendMessage {
     private DataOutputStream out;
     private Thread threadIn;
     private Thread threadOut;
+    private boolean server;
 
-    public SendMessage() {
+    public SendMessage(boolean server) {
         this.socket = new Socket();
+        this.server = server;
     }
 
-    public SendMessage(String addresServer, int portServer) throws IOException {
+    public SendMessage(String addresServer, int portServer,boolean server) throws IOException {
         this.socket = new Socket(addresServer, portServer);
+        this.server = server;
     }
 
     public void setSocket(Socket socket) {
@@ -51,12 +54,15 @@ public class SendMessage {
 
         do {
             Thread.sleep(1);
-        } while (threadIn.isAlive() || threadOut.isAlive());
+
+        } while ((server && threadIn.isAlive()) || (!server && threadOut.isAlive()));
 
         close();
     }
 
     private void close() throws IOException {
+        this.threadIn.interrupt();
+        this.threadOut.interrupt();
         this.socket.close();
     }
 

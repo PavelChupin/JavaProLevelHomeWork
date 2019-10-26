@@ -10,7 +10,7 @@ public class MainServer {
         try (ServerSocket serverSocket = new ServerSocket(8089)) {
             System.out.println("Сервер запущен");
 
-            SendMessage sendMessage = new SendMessage();
+            SendMessage sendMessage = new SendMessage(true);
 
             //Ожидаем подключения от пользователя
             sendMessage.setSocket(serverSocket.accept());
