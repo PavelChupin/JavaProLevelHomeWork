@@ -20,6 +20,12 @@ public class OutputMessage implements Runnable {
             String s = scanner.nextLine();
             try {
                 out.writeUTF(s);
+
+                if(s.equals("/end")){
+                System.out.println("Закрыто соединение");
+                break;
+            }
+
             } catch (SocketException r) {
                 System.out.println("Закрыто соединение");
                 break;

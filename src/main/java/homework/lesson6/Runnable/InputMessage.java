@@ -17,7 +17,13 @@ public class InputMessage implements Runnable {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             try {
-                System.out.println(in.readUTF());
+                String str = in.readUTF();
+                if (str.equals("/end")) {
+                    System.out.println("Закрыто соединение");
+                    break;
+                }
+                System.out.println(str);
+
             } catch (SocketException s) {
                 System.out.println("Закрыто соединение");
                 break;
