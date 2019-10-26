@@ -43,7 +43,7 @@ public class SendMessage {
         startThread();
     }
 
-    private void startThread() throws InterruptedException {
+    private void startThread() throws InterruptedException, IOException {
         threadIn = new Thread(new InputMessage(this.in));
         threadOut = new Thread(new OutputMessage(this.out));
         threadIn.start();
@@ -52,9 +52,11 @@ public class SendMessage {
         do {
             Thread.sleep(1);
         } while (threadIn.isAlive() || threadOut.isAlive());
+
+        close();
     }
 
-    private void sockedClose() throws IOException {
+    private void close() throws IOException {
         this.socket.close();
     }
 
