@@ -54,16 +54,15 @@ public class SendMessage {
 
         do {
             Thread.sleep(1);
-
         } while ((server && threadIn.isAlive()) || (!server && threadOut.isAlive()));
 
         close();
     }
 
     private void close() throws IOException {
-        this.threadIn.interrupt();
-        this.threadOut.interrupt();
-        this.socket.close();
+        if(!threadIn.isInterrupted()) {threadIn.interrupt();}
+        if(!threadOut.isInterrupted()) {threadOut.interrupt();}
+        socket.close();
     }
 
 }
