@@ -48,13 +48,15 @@ public class SendMessage {
 
     private void startThread() throws InterruptedException, IOException {
         threadIn = new Thread(new InputMessage(this.in));
+        threadIn.setDaemon(true);
         threadOut = new Thread(new OutputMessage(this.out));
+        threadOut.setDaemon(true);
         threadIn.start();
         threadOut.start();
 
         do {
             Thread.sleep(1);
-        } while ((server && threadIn.isAlive()) || (!server && threadOut.isAlive()));
+        } while (threadIn.isAlive() && threadOut.isAlive()/*(server && threadIn.isAlive()) || (!server && threadOut.isAlive())*/);
 
         close();
     }
