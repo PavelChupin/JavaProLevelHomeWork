@@ -1,5 +1,6 @@
 package homework.lesson7.javafx.controller.message;
 
+import homework.lesson7.server.command.Command;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import homework.lesson7.javafx.controller.Network;
@@ -13,7 +14,7 @@ public class ServerMessageService implements IMessageService {
 
     private static final String HOST_ADDRESS_PROP = "server.address";
     private static final String HOST_PORT_PROP = "server.port";
-    public static final String STOP_SERVER_COMMAND = "/end";
+    //public static final String STOP_SERVER_COMMAND = "/end";
 
     private String hostAddress;
     private int hostPort;
@@ -81,7 +82,8 @@ public class ServerMessageService implements IMessageService {
     @Override
     public void close() throws IOException {
         if (needStopServerOnClosed) {
-            sendMessage(STOP_SERVER_COMMAND);
+            //sendMessage(STOP_SERVER_COMMAND);
+            sendMessage(Command.STOP_SERVER_COMMAND.getCommand());
         }
         network.close();
     }

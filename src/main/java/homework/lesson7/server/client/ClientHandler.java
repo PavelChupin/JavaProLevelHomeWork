@@ -1,6 +1,7 @@
 package homework.lesson7.server.client;
 
 import homework.lesson7.server.Server;
+import homework.lesson7.server.command.Command;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -48,12 +49,12 @@ public class ClientHandler {
         while (true) {
             String clientMessage = in.readUTF();
             System.out.printf("Message '%s' from client %s%n", clientMessage, clientName);
-            if (clientMessage.equals("/end")) {
+            if (clientMessage.equals(Command.STOP_SERVER_COMMAND.getCommand())) {
                 return;
             }
 
             //Если сообщение отправляется только одному пользователю, то отправим сообщение ему лично
-            if (clientMessage.startsWith("/w")) {
+            if (clientMessage.startsWith(Command.PRIVATE_MESSAGE.getCommand())) {
                 sendMessageToPrivate(clientMessage);
             } else {
                 //Отправляем сообщение всем пользователям
