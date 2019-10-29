@@ -1,5 +1,6 @@
 package homework.lesson7.server.client;
 
+import com.sun.javafx.geom.AreaOp;
 import homework.lesson7.server.Server;
 import homework.lesson7.server.command.Command;
 
@@ -79,8 +80,8 @@ public class ClientHandler {
         if (server.isNickBusy(nickName)) {
             server.messageToPrivateLogin(nickName, clientName + " : " + message);
             return;
-        }else{
-            sendMessage(String.format("Пользователь Nick = %s, не подключен к серверу",nickName));
+        } else {
+            sendMessage(String.format("Пользователь Nick = %s, не подключен к серверу", nickName));
         }
     }
 
@@ -97,35 +98,37 @@ public class ClientHandler {
 
     // "/auth login password"
     private void authentication() throws IOException {
-        String clientMessage = in.readUTF();
-        if (clientMessage.startsWith("/auth")) {
-            //split поиск по регулярному выражению частей строки, возврашает массив слов
-            //\\s+ разбор строки с учетом множесвенности строки
-            String[] loginAndPasswords = clientMessage.split("\\s+");
-            String login = loginAndPasswords[1];
-            String password = loginAndPasswords[2];
+        while (true) {
+            String clientMessage = in.readUTF();
+            if (clientMessage.startsWith("/auth")) {
+                //split поиск по регулярному выражению частей строки, возврашает массив слов
+                //\\s+ разбор строки с учетом множесвенности строки
+                String[] loginAndPasswords = clientMessage.split("\\s+");
+                String login = loginAndPasswords[1];
+                String password = loginAndPasswords[2];
 
-            //Проверка а есть ли такой пользователь у нас в базе пользователей
-            String nick = server.getAuthService().getNickByLoginPass(login, password);
-            if (nick == null) {
-                sendMessage("Неверный логин/пароль");
-                return;
+                //Проверка а есть ли такой пользователь у нас в базе пользователей
+                String nick = server.getAuthService().getNickByLoginPass(login, password);
+                if (nick == null) {
+                    sendMessage("Неверный логин/пароль");
+                    continue;
+                }
+
+                if (server.isNickBusy(nick)) {
+                    sendMessage("Учетная запись уже используется");
+                    continue;
+                }
+
+                sendMessage("/authok " + nick);
+                clientName = nick;
+
+                //Сообщаем всем клиентам, что новый клиент подключился
+                server.broadcastMessage(clientName + " is online");
+
+                //Подписываемся у сервера что нас нужно обрабатывать
+                server.subscribe(this);
+                break;
             }
-
-            if (server.isNickBusy(nick)) {
-                sendMessage("Учетная запись уже используется");
-                return;
-            }
-
-            sendMessage("/authok " + nick);
-            clientName = nick;
-
-            //Сообщаем всем клиентам, что новый клиент подключился
-            server.broadcastMessage(clientName + " is online");
-
-            //Подписываемся у сервера что нас нужно обрабатывать
-            server.subscribe(this);
-
         }
     }
 
