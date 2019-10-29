@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -68,11 +69,14 @@ public class Server {
     }
 
     //Метод отправки сообщения всем пользователям чата
-    public synchronized void broadcastMessage(String s) {
-        for (ClientHandler client : clients) {
-            client.sendMessage(s);
+        public synchronized void broadcastMessage(String s, ClientHandler unfilteredClients) {
+            List<ClientHandler> unfiltered = Arrays.asList(unfilteredClients);
+            for (ClientHandler client : clients) {
+                if (!unfiltered.contains(client)) {
+                    client.sendMessage(s);
+                }
+            }
         }
-    }
 
     public synchronized void messageToPrivateLogin(String nickName, String s) {
         for (ClientHandler client : clients) {

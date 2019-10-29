@@ -59,7 +59,7 @@ public class ClientHandler {
                 sendMessageToPrivate(clientMessage);
             } else {
                 //Отправляем сообщение всем пользователям
-                server.broadcastMessage(clientName + " : " + clientMessage);
+                server.broadcastMessage(clientName + " : " + clientMessage,this);
             }
         }
     }
@@ -87,7 +87,7 @@ public class ClientHandler {
 
     private void closeConnection() {
         server.unSubscribe(this);
-        server.broadcastMessage(clientName + " is offline");
+        server.broadcastMessage(clientName + " is offline",this);
         try {
             socket.close();
         } catch (IOException e) {
@@ -123,7 +123,7 @@ public class ClientHandler {
                 clientName = nick;
 
                 //Сообщаем всем клиентам, что новый клиент подключился
-                server.broadcastMessage(clientName + " is online");
+                server.broadcastMessage(clientName + " is online",this);
 
                 //Подписываемся у сервера что нас нужно обрабатывать
                 server.subscribe(this);
