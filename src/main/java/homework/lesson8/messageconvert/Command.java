@@ -6,4 +6,5 @@ public enum Command {
     AUTH_MESSAGE,
     END,
     CLIET_LIST,
+
 }

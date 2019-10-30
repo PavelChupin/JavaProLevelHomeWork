@@ -23,9 +23,10 @@ public class Network implements Closeable {
         this.serverAddress = serverAddress;
         this.port = port;
         this.messageService = messageService;
+        initNetworkState(serverAddress,port);
     }
 
-    private void initNetworkState(String serverAddress, int port) throws IOException {
+    public void initNetworkState(String serverAddress, int port) throws IOException {
         this.socket = new Socket(serverAddress, port);
         this.inputStream = new DataInputStream(socket.getInputStream());
         this.outputStream = new DataOutputStream(socket.getOutputStream());

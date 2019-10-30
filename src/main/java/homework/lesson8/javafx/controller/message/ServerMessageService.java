@@ -1,5 +1,6 @@
 package homework.lesson8.javafx.controller.message;
 
+import homework.lesson8.messageconvert.AuthMessage;
 import homework.lesson8.messageconvert.ClientListMessage;
 import homework.lesson8.messageconvert.Message;
 import homework.lesson8.server.command.Command;
@@ -38,7 +39,6 @@ public class ServerMessageService implements IMessageService {
     private void initialize() {
         readProperties();
         startConnectionToServer();
-        //sendMessage("Connect");
     }
 
     private void startConnectionToServer() {

@@ -34,7 +34,10 @@ public class ClientHandler {
                     //Начинаем чат между сервером и пользователем
                     readMessages();
                 } catch (TimeOutExeption e) {
+                    System.out.println("Client disconnect of timeout");
                     sendMessage(e.getMessage());
+                    closeConnection();
+                    Thread.currentThread().interrupt();
                 } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
@@ -47,11 +50,21 @@ public class ClientHandler {
     }
 
     // "/auth login password"
-    private void authentication(int timeout) throws IOException {
-        long a =System.currentTimeMillis();
+    private void authentication(int timeout) throws TimeOutExeption {
+        long a = System.currentTimeMillis();
         //Засекаем время авторизации
         while (true) {
-            String clientMessage = in.readUTF();
+            //На каждом цикле проверяем таймаут
+            if (System.currentTimeMillis() - a > timeout * 1000) {
+                throw new TimeOutExeption();
+            }
+
+            String clientMessage = null;
+            try {
+                clientMessage = in.readUTF();
+            } catch (IOException e) {
+                continue;
+            }
 
             Message message = Message.fromJson(clientMessage);
             if (message.command == Command.AUTH_MESSAGE) {
@@ -82,9 +95,6 @@ public class ClientHandler {
                 break;
             }
 
-            if (System.currentTimeMillis() - a > timeout * 1000) {
-                throw new TimeOutExeption();
-            }
         }
     }
 
