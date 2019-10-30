@@ -38,6 +38,7 @@ public class ServerMessageService implements IMessageService {
     private void initialize() {
         readProperties();
         startConnectionToServer();
+        //sendMessage("Connect");
     }
 
     private void startConnectionToServer() {

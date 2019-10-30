@@ -18,13 +18,14 @@ import java.util.Properties;
 public class Server {
     //private static final int PORT = 8189;
     private static final String HOST_PORT_PROP = "server.port";
+    private static final String WAIT_TIMEOUT_AUTH = "server.wait.timeout.auth";
     private final IAuthService authService = new BaseAuthService();
 
     private List<ClientHandler> clients = new ArrayList<>();
 
     public Server() {
         System.out.println("Server is running");
-        try (ServerSocket serverSocket = new ServerSocket(getHostPort())) {
+        try (ServerSocket serverSocket = new ServerSocket(getProperty(HOST_PORT_PROP))) {
 
             authService.start();
 
@@ -35,7 +36,7 @@ public class Server {
                 Socket socket = serverSocket.accept();
                 System.out.println("Client has connected");
                 //Подключения получено, запускаем сервис авторизации
-                new ClientHandler(socket, this);
+                new ClientHandler(socket, this,getProperty(WAIT_TIMEOUT_AUTH));
             }
 
         } catch (IOException e) {
@@ -101,17 +102,17 @@ public class Server {
     }
 
 
-    private int getHostPort() {
+    private int getProperty(String property) {
         Properties serverProperties = new Properties();
-        int hostPort;
+        int value;
         try (InputStream inputStream = getClass().getResourceAsStream("/application.properties")) {
             serverProperties.load(inputStream);
-            hostPort = Integer.parseInt(serverProperties.getProperty(HOST_PORT_PROP));
+            value = Integer.parseInt(serverProperties.getProperty(property));
         } catch (IOException e) {
             throw new RuntimeException("Failed to read application.properties file", e);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid port value", e);
         }
-        return hostPort;
+        return value;
     }
 }
