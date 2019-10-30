@@ -25,6 +25,11 @@
             <artifactId>javafx-fxml</artifactId>
             <version>11.0.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -45,7 +50,7 @@
                 <configuration>
                     <!-- Указываем Mфin Class по запуску fx - приложения -->
                     <mainClass>
-                        homework.lesson4.javafx.MainHomeWorkLesson4
+                        homework.lesson8.javafx.MainGUI
                     </mainClass>
                 </configuration>
             </plugin>
