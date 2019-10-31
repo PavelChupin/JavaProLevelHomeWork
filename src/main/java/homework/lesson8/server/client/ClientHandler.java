@@ -1,6 +1,5 @@
 package homework.lesson8.server.client;
 
-import homework.lesson8.TimeOutExeption;
 import homework.lesson8.messageconvert.*;
 import homework.lesson8.server.Server;
 
@@ -26,19 +25,26 @@ public class ClientHandler {
             this.out = new DataOutputStream(socket.getOutputStream());
 
             //Запускаем поток в котором обрабатываем данные связанные с нашим клиентом
-           new Thread(() -> {
+            new Thread(() -> {
                 try {
-                    //Авторизируем
-                    authentication(timeout);
+                    Thread chat = new Thread(() -> {
+                        try {
+                            //Авторизируем
+                            authentication();
+                            //Начинаем чат между сервером и пользователем
+                            readMessages();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } finally {
+                            closeConnection();
+                        }
+                    });
+                    chat.start();
 
-                    //Начинаем чат между сервером и пользователем
-                    readMessages();
-                } catch (TimeOutExeption e) {
-                    System.out.println("Client disconnect of timeout");
-                    sendMessage(e.getMessage());
-                    closeConnection();
-                    Thread.currentThread().interrupt();
-                } catch (IOException e) {
+                    //Запускаем ожидание
+                    waitTimeOut(timeout, chat);
+
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 } finally {
                     closeConnection();
@@ -49,23 +55,39 @@ public class ClientHandler {
         }
     }
 
-    // "/auth login password"
-    private void authentication(int timeout) throws TimeOutExeption {
-        long a = System.currentTimeMillis();
-        //Засекаем время авторизации
-        while (true) {
-            //На каждом цикле проверяем таймаут
-            if (System.currentTimeMillis() - a > timeout * 1000) {
-                throw new TimeOutExeption();
-            }
-
-            String clientMessage = null;
+    private void waitTimeOut(int timeout, Thread chat) throws InterruptedException {
+        Thread waittimeout = new Thread(() -> {
             try {
-                clientMessage = in.readUTF();
-            } catch (IOException e) {
-                continue;
+                long a = System.currentTimeMillis();
+                do {
+                    Thread.sleep(1);
+                } while (System.currentTimeMillis() - a <= timeout * 1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+        });
+        waittimeout.setDaemon(true);
+        waittimeout.start();
 
+        //Если поток ожидания закончил работу, а пользователь не был авторизирован, то закроем сокет и отправим клиенту сообщение
+        do {
+            Thread.sleep(1);
+        } while (waittimeout.isAlive());
+
+        if (this.clientName == null || this.clientName.isEmpty()) {
+            System.out.println("Client disconnect of timeout");
+            sendMessage("TimeOut for connection end");
+            if (chat.isAlive()) {
+                chat.interrupted();
+            }
+            closeConnection();
+        }
+    }
+
+    // "/auth login password"
+    private void authentication() throws IOException {
+        while (true) {
+            String clientMessage = in.readUTF();
             Message message = Message.fromJson(clientMessage);
             if (message.command == Command.AUTH_MESSAGE) {
                 AuthMessage authMessage = message.authMessage;
@@ -94,7 +116,6 @@ public class ClientHandler {
                 server.subscribe(this);
                 break;
             }
-
         }
     }
 

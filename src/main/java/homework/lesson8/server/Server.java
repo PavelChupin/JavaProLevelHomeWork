@@ -1,8 +1,8 @@
 package homework.lesson8.server;
 
 import homework.lesson8.messageconvert.Message;
-import homework.lesson8.server.auth.IAuthService;
 import homework.lesson8.server.auth.BaseAuthService;
+import homework.lesson8.server.auth.IAuthService;
 import homework.lesson8.server.client.ClientHandler;
 
 import java.io.IOException;
@@ -10,13 +10,11 @@ import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
 public class Server {
-    //private static final int PORT = 8189;
     private static final String HOST_PORT_PROP = "server.port";
     private static final String WAIT_TIMEOUT_AUTH = "server.wait.timeout.auth";
     private final IAuthService authService = new BaseAuthService();
@@ -36,7 +34,7 @@ public class Server {
                 Socket socket = serverSocket.accept();
                 System.out.println("Client has connected");
                 //Подключения получено, запускаем сервис авторизации
-                new ClientHandler(socket, this,getProperty(WAIT_TIMEOUT_AUTH));
+                new ClientHandler(socket, this, getProperty(WAIT_TIMEOUT_AUTH));
             }
 
         } catch (IOException e) {
@@ -55,11 +53,11 @@ public class Server {
 
     private void broadcastClientList() {
         List<String> nickNames = new ArrayList<>();
-        for(ClientHandler client:clients){
+        for (ClientHandler client : clients) {
             nickNames.add(client.getClientName());
         }
         Message message = Message.createClientList(nickNames);
-        broadcastMessage(message.toJson(),null);
+        broadcastMessage(message.toJson(), null);
     }
 
     //Метод отписки пользователя от сервера
