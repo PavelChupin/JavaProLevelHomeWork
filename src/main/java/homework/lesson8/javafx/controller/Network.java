@@ -1,5 +1,6 @@
 package homework.lesson8.javafx.controller;
 
+import homework.lesson8.messageconvert.Message;
 import javafx.application.Platform;
 import homework.lesson8.javafx.controller.message.IMessageService;
 
@@ -31,17 +32,10 @@ public class Network implements Closeable {
         this.inputStream = new DataInputStream(socket.getInputStream());
         this.outputStream = new DataOutputStream(socket.getOutputStream());
 
-        new Thread(() -> {
-            while (true) {
-                try {
-                    String message = inputStream.readUTF();
-                    Platform.runLater(() -> messageService.processRetrievedMessage(message));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    break;
-                }
-            }
-        }).start();
+        Thread readServerThread = new Thread(this::readMessagesFromServer);
+        readServerThread.setDaemon(true);
+        readServerThread.start();
+
     }
 
 
@@ -53,6 +47,19 @@ public class Network implements Closeable {
             outputStream.writeUTF(message);
         } catch (IOException e) {
             throw new RuntimeException("Failed to send message: " + message);
+        }
+    }
+
+    private void readMessagesFromServer() {
+        while (true) {
+            try {
+                String message = inputStream.readUTF();
+                Message msg = Message.fromJson(message);
+                Platform.runLater(() -> messageService.processRetrievedMessage(msg));
+            } catch (Exception e) {
+                System.out.println("Соединение с сервером было разорвано!");
+                break;
+            }
         }
     }
 

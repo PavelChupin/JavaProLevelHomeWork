@@ -1,12 +1,16 @@
 package homework.lesson8.server.client;
 
-import homework.lesson8.messageconvert.*;
+import homework.lesson8.messageconvert.Command;
+import homework.lesson8.messageconvert.Message;
+import homework.lesson8.messageconvert.message.AuthMessage;
 import homework.lesson8.server.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ClientHandler {
     private Server server;
@@ -24,37 +28,25 @@ public class ClientHandler {
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
 
-            //Запускаем поток в котором обрабатываем данные связанные с нашим клиентом
-            new Thread(() -> {
+            Thread thread = new Thread(() -> {
                 try {
-                    Thread chat = new Thread(() -> {
-                        try {
-                            //Авторизируем
-                            authentication();
-                            //Начинаем чат между сервером и пользователем
-                            readMessages();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            closeConnection();
-                        }
-                    });
-                    chat.start();
-
-                    //Запускаем ожидание
-                    waitTimeOut(timeout, chat);
-
-                } catch (InterruptedException e) {
+                    authentication(timeout);
+                    readMessages();
+                } catch (IOException e) {
                     e.printStackTrace();
                 } finally {
                     closeConnection();
                 }
-            }).start();
+            });
+            thread.setDaemon(true);
+            thread.start();
         } catch (IOException e) {
             throw new RuntimeException("Failed to create client handler", e);
         }
+
     }
 
+    /*
     private void waitTimeOut(int timeout, Thread chat) throws InterruptedException {
         Thread waittimeout = new Thread(() -> {
             try {
@@ -83,41 +75,55 @@ public class ClientHandler {
             closeConnection();
         }
     }
-
+    */
     // "/auth login password"
-    private void authentication() throws IOException {
+    private void authentication(int timeout) throws IOException {
         while (true) {
+            Timer timeoutTimer = new Timer(true);
+            timeoutTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    try {
+                        synchronized (this) {
+                            if (clientName == null) {
+                                System.out.println("authentication is terminated caused by timeout expired");
+                                sendMessage(Message.createAuthError("Истекло время ожидания подключения!"));
+                                Thread.sleep(100);
+                                socket.close();
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, timeout*1000);
             String clientMessage = in.readUTF();
-            Message message = Message.fromJson(clientMessage);
-            if (message.command == Command.AUTH_MESSAGE) {
-                AuthMessage authMessage = message.authMessage;
-                String login = authMessage.login;
-                String password = authMessage.pass;
+            synchronized (this) {
+                Message message = Message.fromJson(clientMessage);
+                if (message.command == Command.AUTH_MESSAGE) {
+                    AuthMessage authMessage = message.authMessage;
+                    String login = authMessage.login;
+                    String password = authMessage.pass;
+                    String nick = server.getAuthService().getNickByLoginPass(login, password);
+                    if (nick == null) {
+                        sendMessage(Message.createAuthError("Неверные логин/пароль"));
+                        continue;
+                    }
 
-                //Проверка а есть ли такой пользователь у нас в базе пользователей
-                String nick = server.getAuthService().getNickByLoginPass(login, password);
-                if (nick == null) {
-                    sendMessage("Неверный логин/пароль");
-                    continue;
+                    if (server.isNickBusy(nick)) {
+                        sendMessage(Message.createAuthError("Учетная запись уже используется"));
+                        continue;
+                    }
+                    clientName = nick;
+                    sendMessage(Message.createAuthOk(clientName));
+                    server.broadcastMessage(Message.createPublic(null, clientName + " is online"), this);
+                    server.subscribe(this);
+                    break;
                 }
-
-                if (server.isNickBusy(nick)) {
-                    sendMessage("Учетная запись уже используется");
-                    continue;
-                }
-
-                sendMessage("/authok " + nick);
-                clientName = nick;
-
-                //Сообщаем всем клиентам, что новый клиент подключился
-                server.broadcastMessage(clientName + " is online", this);
-
-                //Подписываемся у сервера что нас нужно обрабатывать
-                server.subscribe(this);
-                break;
             }
         }
     }
+
 
     //Основной метод чата по пересылке сообщений
     private void readMessages() throws IOException {
@@ -127,39 +133,20 @@ public class ClientHandler {
             Message m = Message.fromJson(clientMessage);
             switch (m.command) {
                 case PUBLIC_MESSAGE:
-                    PublickMessage publickMessage = m.publickMessage;
-                    server.broadcastMessage(publickMessage.from + " : " + publickMessage.message, this);
+                    //PublicMessage publicMessage = m.publicMessage;
+                    //server.broadcastMessage(publicMessage.from + " : " + publicMessage.message, this);
+                    server.broadcastMessage(m, this);
                     break;
                 case PRIVATE_MESSAGE:
-                    PrivateMessage privateMessage = m.privateMessage;
-                    server.messageToPrivateLogin(privateMessage.to, privateMessage.message);
+                    //PrivateMessage privateMessage = m.privateMessage;
+                    //server.messageToPrivateLogin(privateMessage.to, privateMessage.message);
+                    server.messageToPrivateLogin(m);
                     break;
                 case END:
                     return;
             }
         }
     }
-/*
-    private void sendMessageToPrivate(String clientMessage) {
-        String[] sendTo = clientMessage.split("\\s+");
-        String nickName = null;
-        String message = null;
-
-        if (sendTo.length < 3) {
-            sendMessage("Не корректно указаны параметры для отправки приватного сообщения.");
-            return;
-        } else {
-            nickName = sendTo[1];
-            message = clientMessage.replace(sendTo[0], "").replace(sendTo[1], "").trim();
-        }
-
-        if (server.isNickBusy(nickName)) {
-            server.messageToPrivateLogin(nickName, clientName + " : " + message);
-            return;
-        } else {
-            sendMessage(String.format("Пользователь Nick = %s, не подключен к серверу", nickName));
-        }
-    }*/
 
     private void closeConnection() {
         server.unSubscribe(this);
@@ -172,15 +159,19 @@ public class ClientHandler {
         }
     }
 
+    private void sendMessage(Message message) {
+        sendMessage(message.toJson());
+    }
 
-    public void sendMessage(String s) {
+    public void sendMessage(String message) {
         try {
-            out.writeUTF(s);
+            out.writeUTF(message);
         } catch (IOException e) {
-            System.err.println("Failed to send message to user " + clientName + " : " + s);
+            System.err.println("Failed to send message to user " + clientName + " : " + message);
             e.printStackTrace();
         }
     }
+
 
     public String getClientName() {
         return clientName;

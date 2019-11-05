@@ -1,12 +1,17 @@
-package homework.lesson8.messageconvert;
-
-import com.google.gson.Gson;
+package homework.lesson8.messageconvert.message;
 
 public class PrivateMessage {
 
     public String from;
     public String to;
     public String message;
+
+
+    public PrivateMessage(String from, String to, String message) {
+        this.from = from;
+        this.to = to;
+        this.message = message;
+    }
 
     @Override
     public String toString() {
@@ -16,7 +21,7 @@ public class PrivateMessage {
                 ", message='" + message + '\'' +
                 '}';
     }
-
+/*
     public String toJson() {
         //Gson gson = new GsonBuilder().setPrettyPrinting().create();
         //return gson.toJson(this);
@@ -25,7 +30,7 @@ public class PrivateMessage {
 
     public static PrivateMessage fromJson(String json){
         return new Gson().fromJson(json, PrivateMessage.class);
-    }
+    }*/
 
     /*
     public static void main(String[] args) {

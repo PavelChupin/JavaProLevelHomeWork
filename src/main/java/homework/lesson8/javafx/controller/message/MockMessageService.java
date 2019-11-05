@@ -1,7 +1,7 @@
 package homework.lesson8.javafx.controller.message;
 
 import javafx.scene.control.TextArea;
-
+/*
 public class MockMessageService implements IMessageService {
 
     private TextArea chatTextArea;
@@ -22,4 +22,4 @@ public class MockMessageService implements IMessageService {
         throw new UnsupportedOperationException();
 //        chatTextArea.appendText(message + System.lineSeparator());
     }
-}
+}*/

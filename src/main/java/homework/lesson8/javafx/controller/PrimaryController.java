@@ -1,34 +1,49 @@
 package homework.lesson8.javafx.controller;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
-
-import homework.lesson8.messageconvert.*;
+import homework.lesson8.javafx.controller.message.IMessageService;
+import homework.lesson8.javafx.controller.message.ServerMessageService;
+import homework.lesson8.messageconvert.Message;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import homework.lesson8.javafx.controller.message.ServerMessageService;
-import homework.lesson8.javafx.controller.message.IMessageService;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 
 public class PrimaryController implements Initializable {
 
-    public @FXML TextArea chatTextArea;
-    public @FXML TextField messageText;
-    public @FXML Button sendMessageButton;
+    public static final String ALL_ITEM = "All";
 
-    public @FXML TextField loginField;
-    public @FXML PasswordField passField;
+    public @FXML
+    TextArea chatTextArea;
+    public @FXML
+    TextField messageText;
+    public @FXML
+    Button sendMessageButton;
 
-    public @FXML HBox authPanel;
-    public @FXML VBox chatPanel;
-    public String nickName;
+    public @FXML
+    TextField loginField;
+    public @FXML
+    PasswordField passField;
 
-    public @FXML ListView<String> clientList;
+    public @FXML
+    HBox authPanel;
+    public @FXML
+    VBox chatPanel;
+
+    public @FXML
+    ListView<String> clientList;
+
+    private String nickName;
 
 
     private IMessageService messageService;
@@ -79,39 +94,21 @@ public class PrimaryController implements Initializable {
 
     private void sendMessage() {
         String message = messageText.getText();
-        chatTextArea.appendText("Я: " + message + System.lineSeparator());
-
-        Message msg = buildMessage(message);
-
-        //messageService.sendMessage(message);
-        messageService.sendMessage(msg.toJson());
-        messageText.clear();
+        if (StringUtils.isNotBlank(message)) {
+            chatTextArea.appendText(String.format("Я: %s%n", message));
+            Message msg = buildMessage(message);
+            messageService.sendMessage(msg);
+            messageText.clear();
+        }
     }
 
     private Message buildMessage(String message) {
-        String selectedNickName = clientList.getSelectionModel().getSelectedItem();
-        if(selectedNickName != null){
-            PrivateMessage msg = new PrivateMessage();
-            msg.from = nickName;
-            msg.to = selectedNickName;
-            msg.message = message;
-
-            return Message.createPrivate(msg);
+        String selectedNickname = clientList.getSelectionModel().getSelectedItem();
+        if (selectedNickname != null && !selectedNickname.equals(ALL_ITEM)) {
+            return Message.createPrivate(nickName, selectedNickname, message);
         }
 
-        return buildPublickMessage(message);
-    }
-
-    private Message buildPublickMessage(String message) {
-        PublickMessage publickMessage = new PublickMessage();
-        publickMessage.from = nickName;
-        publickMessage.message = message;
-
-        Message msg = new Message();
-        msg.command = Command.PUBLIC_MESSAGE;
-        msg.publickMessage = publickMessage;
-
-        return msg;
+        return Message.createPublic(nickName, message);
     }
 
     public void shutdown() {
@@ -126,14 +123,36 @@ public class PrimaryController implements Initializable {
     public void sendAuth(ActionEvent actionEvent) {
         String login = loginField.getText();
         String password = passField.getText();
+        messageService.sendMessage(Message.createAuth(login, password));
+    }
 
-        AuthMessage msg = new AuthMessage();
-        msg.login = login;
-        msg.pass = password;
 
-        Message authMessage = Message.createAuth(msg);
+    public void showChatPanel() {
+        authPanel.setVisible(false);
+        chatPanel.setVisible(true);
+    }
 
-        //messageService.sendMessage(String.format("/auth %s %s", login, password));
-        messageService.sendMessage(authMessage.toJson());
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+        refreshWindowTitle(nickName);
+    }
+
+    private void refreshWindowTitle(String nickName) {
+        Stage stage = (Stage) chatPanel.getScene().getWindow();
+        stage.setTitle(nickName);
+    }
+
+    public void showAuthError(String errorMsg) {
+        if (authPanel.isVisible()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Authentication is failed");
+            alert.setContentText(errorMsg);
+            alert.showAndWait();
+        }
+    }
+
+    public void refreshUsersList(List<String> onlineUserNicknames) {
+        onlineUserNicknames.add(ALL_ITEM);
+        clientList.setItems(FXCollections.observableArrayList(onlineUserNicknames));
     }
 }

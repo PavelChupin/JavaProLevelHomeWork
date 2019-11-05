@@ -1,25 +1,21 @@
 package homework.lesson8.javafx.controller.message;
 
-import homework.lesson8.messageconvert.AuthMessage;
-import homework.lesson8.messageconvert.ClientListMessage;
-import homework.lesson8.messageconvert.Message;
-import homework.lesson8.server.command.Command;
-import javafx.collections.FXCollections;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextArea;
 import homework.lesson8.javafx.controller.Network;
 import homework.lesson8.javafx.controller.PrimaryController;
+import homework.lesson8.messageconvert.Message;
+import homework.lesson8.messageconvert.message.PrivateMessage;
+import homework.lesson8.messageconvert.message.PublicMessage;
+import javafx.scene.control.TextArea;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 public class ServerMessageService implements IMessageService {
 
     private static final String HOST_ADDRESS_PROP = "server.address";
     private static final String HOST_PORT_PROP = "server.port";
-    //public static final String STOP_SERVER_COMMAND = "/end";
-    private String nickName;
 
     private String hostAddress;
     private int hostPort;
@@ -63,45 +59,67 @@ public class ServerMessageService implements IMessageService {
     }
 
     @Override
-    public void sendMessage(String message) {
-        //Message publickMessage = buildPublickMessage(message);
-        network.send(message);
-        //network.send(publickMessage.toJson());
+    public void sendMessage(Message message) {
+        network.send(message.toJson());
     }
 
-
-
     @Override
-    public void processRetrievedMessage(String message) {
-        if (message.startsWith("/authok")) {
-            nickName= message.split("\\s+")[1];
-            primaryController.nickName = nickName;
-            primaryController.authPanel.setVisible(false);
-            primaryController.chatPanel.setVisible(true);
-        }
-        else if (primaryController.authPanel.isVisible()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Authentication is failed");
-            alert.setContentText(message);
-            alert.showAndWait();
-        }
-        else {
-            if(message.startsWith("{") && message.endsWith("}")){
-                Message msg = Message.fromJson(message);
-                ClientListMessage clientListMessage = msg.clientListMessage;
-                primaryController.clientList.setItems(FXCollections.observableArrayList(clientListMessage.online));
-            }else{
-                chatTextArea.appendText("Сервер: " + message + System.lineSeparator());
+    public void processRetrievedMessage(Message message) {
+        switch (message.command) {
+            case AUTH_OK:
+                processAuthOk(message);
+                break;
+            case PRIVATE_MESSAGE: {
+                processPrivateMessage(message);
+                break;
             }
+            case PUBLIC_MESSAGE: {
+                processPublicMessage(message);
+                break;
+            }
+            case AUTH_ERROR: {
+                primaryController.showAuthError(message.authErrorMessage.errorMsg);
+                break;
+            }
+            case CLIENT_LIST:
+                List<String> onlineUserNicknames = message.clientListMessage.online;
+                primaryController.refreshUsersList(onlineUserNicknames);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown command type: " + message.command);
         }
+    }
+
+    private void processPublicMessage(Message message) {
+        PublicMessage publicMessage = message.publicMessage;
+        String from = publicMessage.from;
+        String msg = publicMessage.message;
+        if (from != null) {
+            chatTextArea.appendText(String.format("%s: %s%n", from, msg));
+        } else {
+            chatTextArea.appendText(String.format("%s%n", msg));
+        }
+    }
+
+    private void processPrivateMessage(Message message) {
+        PrivateMessage privateMessage = message.privateMessage;
+        String from = privateMessage.from;
+        String msg = privateMessage.message;
+        String msgToView = String.format("%s (private): %s%n", from, msg);
+        chatTextArea.appendText(msgToView);
+    }
+
+    private void processAuthOk(Message message) {
+        primaryController.setNickName(message.authOkMessage.nickName);
+        primaryController.showChatPanel();
     }
 
     @Override
     public void close() throws IOException {
         if (needStopServerOnClosed) {
-            //sendMessage(STOP_SERVER_COMMAND);
-            sendMessage(Command.STOP_SERVER_COMMAND.getCommand());
+            sendMessage(Message.serverEndMessage());
         }
         network.close();
     }
+
 }

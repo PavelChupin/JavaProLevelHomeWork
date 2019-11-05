@@ -90,6 +90,10 @@ public class Server {
         }
     }
 
+    public void broadcastMessage(Message message, ClientHandler unfilteredClients) {
+        broadcastMessage(message.toJson(),unfilteredClients);
+    }
+
     public synchronized void messageToPrivateLogin(String nickName, String s) {
         for (ClientHandler client : clients) {
             if (client.getClientName().equals(nickName)) {
@@ -99,6 +103,14 @@ public class Server {
         }
     }
 
+    public synchronized void messageToPrivateLogin(Message message) {
+        for (ClientHandler client : clients) {
+            if (client.getClientName().equals(message.privateMessage.to)) {
+                client.sendMessage(message.toJson());
+                break;
+            }
+        }
+    }
 
     private int getProperty(String property) {
         Properties serverProperties = new Properties();
@@ -113,4 +125,6 @@ public class Server {
         }
         return value;
     }
+
+
 }

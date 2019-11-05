@@ -1,5 +1,5 @@
 package homework.lesson8.server.command;
-
+/*
 public enum Command {
 
     PRIVATE_MESSAGE("/w"),
@@ -16,4 +16,4 @@ public enum Command {
     }
 
 
-}
+}*/
