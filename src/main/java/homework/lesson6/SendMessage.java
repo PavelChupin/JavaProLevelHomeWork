@@ -62,8 +62,10 @@ public class SendMessage {
     }
 
     private void close() throws IOException {
-        if(!threadIn.isInterrupted()) {threadIn.interrupt();}
-        if(!threadOut.isInterrupted()) {threadOut.interrupt();}
+        //if(!threadIn.isInterrupted()) {threadIn.interrupt();}
+        //if(!threadOut.isInterrupted()) {threadOut.interrupt();}
+        if(threadIn.isAlive()) {threadIn.interrupt();}
+        if(threadOut.isAlive()) {threadOut.interrupt();}
         socket.close();
     }
 
